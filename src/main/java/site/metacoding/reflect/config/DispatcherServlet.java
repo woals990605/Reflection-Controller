@@ -54,7 +54,7 @@ public class DispatcherServlet extends HttpServlet{
 					Object[] queue = new Object[params.length];
 					for(int i=0; i< params.length; i++) {
 						Class<?> cls = params[i].getType();
-						System.out.println("cls : "+cls);
+						
 						if(cls == HttpServletRequest.class) {
 							System.out.println("Request 찾음");
 							queue[i] = req;
