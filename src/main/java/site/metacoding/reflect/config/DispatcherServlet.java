@@ -64,6 +64,21 @@ public class DispatcherServlet extends HttpServlet{
 						}else {
 							Constructor<?> constructor = cls.getConstructor();
 							queue[i] = constructor.newInstance();
+							
+							for(Method m : queue[i].getClass().getDeclaredMethods()) {
+								if(m.getName().startsWith("set")) {
+									String key = m.getName().replace("set", "").toLowerCase();
+									
+									// 2가지 개념 req.getHeader(); 그 헤더에 Content-Type이 application/x-www면
+									String param = req.getParameter(key);
+									
+									// req.getHeader(); 그 헤더에 Content-Type이 application/x-json
+									
+									if(param!=null) {
+										m.invoke(queue[i], param);
+									}
+								}
+							}
 						}
 						
 						System.out.println("size : "+queue.length);
