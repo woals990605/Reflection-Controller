@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import site.metacoding.reflect.config.MessageConverter;
 import site.metacoding.reflect.config.ViewResolver;
+import site.metacoding.reflect.config.web.RequestMapping;
 import site.metacoding.reflect.domain.Member;
 import site.metacoding.reflect.util.UtilsLog;
 
@@ -19,6 +20,7 @@ public class MemberController {
 	private static final String TAG="MemberController : ";
 	
 	/* GET    /join      */
+	@RequestMapping("/join")
 	public void join(HttpServletRequest request, HttpServletResponse response) {
 		UtilsLog.getInstance().info(TAG, "join()");
 		UtilsLog.getInstance().info(TAG, "Service가 호출되어 회원가입 완료되었습니다.");
@@ -29,6 +31,7 @@ public class MemberController {
 	}
 	
 	/* GET    /login      */
+	@RequestMapping("/login")
 	public void login(HttpServletRequest request, HttpServletResponse response) {
 		UtilsLog.getInstance().info(TAG, "login()");
 		UtilsLog.getInstance().info(TAG, "Service가 호출되어 로그인이 완료되었습니다.");
@@ -38,6 +41,7 @@ public class MemberController {
 	}
 	
 	/* GET    /findById     */
+	@RequestMapping("/findById")
 	public void findById(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		UtilsLog.getInstance().info(TAG, "findById()");
 		UtilsLog.getInstance().info(TAG, "Service가 호출되어 Member를 찾았습니다.");

@@ -1,8 +1,10 @@
 package site.metacoding.reflect.config;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import site.metacoding.reflect.config.web.RequestMapping;
 import site.metacoding.reflect.util.UtilsLog;
 import site.metacoding.reflect.web.MemberController;
 
@@ -41,16 +44,39 @@ public class DispatcherServlet extends HttpServlet{
 		// 리플렉션 발동
 		Method[] methods = memberController.getClass().getDeclaredMethods();
 		for(Method method : methods) {
-			UtilsLog.getInstance().info(TAG, method.getName());
-			String idf = identifier.replace("/","");
-			if(idf.equals(method.getName())) {
-				UtilsLog.getInstance().info(TAG, idf+"메서드를 실행합니다");
+			Annotation annotation = method.getDeclaredAnnotation(RequestMapping.class);
+			RequestMapping requestMapping = (RequestMapping) annotation;
+			
+			if(identifier.equals(requestMapping.value())) {
+				
 				try {
-					method.invoke(memberController, req, resp);
+					Parameter[] params = method.getParameters();
+					Object[] queue = new Object[params.length];
+					for(int i=0; i< params.length; i++) {
+						Class<?> cls = params[i].getType();
+						System.out.println("cls : "+cls);
+						if(cls == HttpServletRequest.class) {
+							System.out.println("Request 찾음");
+							queue[i] = req;
+						}else if(cls == HttpServletResponse.class) {
+							System.out.println("Response 찾음");
+							queue[i] = resp;
+						}else {
+							Constructor<?> constructor = cls.getConstructor();
+							queue[i] = constructor.newInstance();
+						}
+						
+						System.out.println("size : "+queue.length);
+					}	
+					method.invoke(memberController, queue);
+					
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				break;
 			}
+			
 		}
 		
 	}
